@@ -29,6 +29,7 @@ private:
 	mdata_t data;
 	std::map<std::string,std::string> fields;
 	unsigned _genre;
+	unsigned _track;
 
 	const static std::vector<std::pair<std::string,unsigned>> names;
 
@@ -44,7 +45,7 @@ private:
 	}
 
 public:
-	Tag(std::istream &stream) : data(id3::readBinaryFile(stream)), fields(), _genre(255), exists(false) {};
+	Tag(std::istream &stream) : data(id3::readBinaryFile(stream)), fields(), _genre(255), _track(0), exists(false) {};
 	virtual ~Tag() = default;
 	bool parse();
 
@@ -53,6 +54,7 @@ public:
 	std::string album() const { return get("album") ; }
 	std::string year() const { return get("year") ; }
 	std::string comment() const { return get("comment") ; }
+	unsigned track() const { return _track; }
 	unsigned genre() const { return _genre; }
 	bool hasTag() const { return exists; }
 	operator std::string() const;

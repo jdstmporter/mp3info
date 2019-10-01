@@ -37,7 +37,7 @@ const std::vector<std::pair<std::string,unsigned>> Tag::names = {
 		std::make_pair("Artist",30),
 		std::make_pair("Album",30),
 		std::make_pair("Year",4),
-		std::make_pair("Comment",30)
+		std::make_pair("Comment",28)
 };
 
 
@@ -58,7 +58,8 @@ bool Tag::parse() {
 		fields[name]=std::string(it,it+length);
 		it+=length;
 	}
-	_genre=(unsigned)(unsigned char)*it;
+	_track=(unsigned)(unsigned char)*(++it);
+	_genre=(unsigned)(unsigned char)*(++it);
 	return true;
 }
 
@@ -69,6 +70,7 @@ Tag::operator std::string() const {
 		auto name=field->first;
 		s << name << " : " << get(name) << std::endl;
 	}
+	s << "Track : " << track() << std::endl;
 	s << "Genre : " << genre() << std::endl;
 	return s.str();
 }
