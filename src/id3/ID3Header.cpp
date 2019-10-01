@@ -4,8 +4,9 @@
  *  Created on: 1 Oct 2019
  *      Author: julianporter
  */
-#import "ID3FrameHeader.hpp"
+#import "ID3Types.hpp"
 #include <sstream>
+#include "ID3Header.hpp"
 
 namespace id3 { namespace v2 {
 
@@ -42,6 +43,26 @@ std::string Version::toString() const {
 		s << major << "." << minor;
 		return s.str();
 	}
+
+const std::string Header::tagString="ID3";
+
+Header::Header(const mdata_t &data,const long o) : header(10,0), offset(o) {
+	auto ptr=data.begin()+offset;
+	std::copy_n(ptr,10,header.begin());
+
+	tag=std::string(header.begin(),header.begin()+3);
+	version=Version(header[3],header[4]);
+	flags=Flags(header[5]);
+	length=SyncSafeInteger(header.begin()+6);
+}
+
+bool Header::check() const {
+	if(tag!=Header::tagString) return false;
+	if(!version) return false;
+	if(!flags) return false;
+	if(std::any_of(header.begin()+6,header.end(),[](char c) { return 127 < (unsigned)c; })) return false;
+	return true;
+}
 
 }}
 

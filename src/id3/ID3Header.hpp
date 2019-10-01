@@ -5,8 +5,8 @@
  *      Author: julianporter
  */
 
-#ifndef ID3FRAMEHEADER_HPP_
-#define ID3FRAMEHEADER_HPP_
+#ifndef ID3HEADER_HPP_
+#define ID3HEADER_HPP_
 
 #include <cstdint>
 #include <string>
@@ -63,7 +63,7 @@ struct Version {
 class Header {
 private:
 	const static std::string tagString;
-	char header[10];
+	std::vector<char> header;
 
 	std::string tag;
 
@@ -75,7 +75,7 @@ public:
 	unsigned length;
 	long offset;
 
-	Header() : version(), flags(), length(0), offset(0) {};
+	Header() : header(10,0), tag(), version(), flags(), length(0), offset(0) {};
 	Header(const mdata_t &data,const long o);
 	Header(const Header &) = default;
 	virtual ~Header() = default;
@@ -94,4 +94,4 @@ std::ostream & operator<<(std::ostream &o,const id3::v2::Header &f);
 
 
 
-#endif /* ID3FRAMEHEADER_HPP_ */
+#endif /* ID3HEADER_HPP_ */

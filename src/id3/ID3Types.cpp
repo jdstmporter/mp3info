@@ -30,6 +30,16 @@ SyncSafeInteger::SyncSafeInteger(char *b) {
 		i32=v;
 	}
 
+	SyncSafeInteger::SyncSafeInteger(it_t it) {
+		uint32_t v=0;
+		for(auto i=0;i<4;i++) {
+			auto c=(*it++);
+			i8[i]=c;
+			v=(v<<7) + (127 & (uint32_t)c);
+		}
+		i32=v;
+	}
+
 SyncSafeInteger::operator bool() const {
 	return std::none_of(i8,i8+4,[](auto c) { return 127 < (unsigned)c; });
 }
@@ -40,10 +50,18 @@ SyncSafeInteger::operator bool() const {
 	template<std::codecvt_mode M = (std::codecvt_mode)0>
 	using converter = std::wstring_convert<convert<M>,char16_t>;
 
+	char16_t from8(char a,char b,bool rev) {
+		unsigned char x = rev ? b : a;
+		unsigned char y = rev ? a : b;
+		return ((char16_t)(x<< 8)) + ((char16_t)y);
+	}
+
+
 	template<std::codecvt_mode M = (std::codecvt_mode)0>
 	class UTF16_8 {
 	private:
-		char *ptr;
+		it_t begin;
+		it_t end;
 		long length;
 		converter<M> c;
 
@@ -52,47 +70,126 @@ SyncSafeInteger::operator bool() const {
 		std::string string8;
 
 		void ch8To16() {
-			for(auto i=0;i<length;i+=2) {
-				raw16[i/2] = (((char16_t)ptr[i+1])<< 8) + ((char16_t)ptr[i]);
+			//for(auto it=begin;it!=end;it++) std::cout << std::hex << (unsigned)(unsigned char)*it << " ";
+			//std::cout << std::dec << std::endl;
+			auto it=begin;
+			auto offset=0;
+
+			char16_t bom=from8(it[0],it[1]);
+			auto rev=bom==0xfffe;
+			if(bom==0xfffe||bom==0xfeff) it+=2;
+
+			while(it!=end) {
+				raw16[offset++] = from8(it[0],it[1],rev);
+				it+=2;
 			}
+			//for(auto it=raw16.begin();it!=raw16.end();it++) std::cout << std::hex << *it << " ";
+			//std::cout << std::dec << std::endl;
 		}
 		void split() {
-			auto pos=raw16.data();
-			auto start=pos;
-			auto end=pos+raw16.size();
-			while(pos<end) {
-				if(0==*pos) {
-					strings16.push_back(std::u16string(start,pos));
-					pos+=1;
-					start=pos;
+
+			auto it=raw16.begin();
+			auto start=it;
+			auto end=raw16.end();
+			while(it<end) {
+				if(0==it[0]) {
+					strings16.push_back(std::u16string(start,it));
+					it++;
+					start=it;
 				}
-				pos++;
+				it++;
 			}
-			if(start<end) strings16.push_back(std::u16string(start,end));
+			if(start!=end) strings16.push_back(std::u16string(start,end));
 		}
 
 		std::string convert() {
 			std::stringstream stream;
 			for(auto it=strings16.begin();it!=strings16.end();it++) {
-				auto st=c.to_bytes(*it);
-				st.erase(0,3);
+				std::u16string s=*it;
+				//std::cout << "String16 ";
+				//for(auto i=s.begin();i!=s.end();i++) std::cout << std::hex << *i << " ";
+				//std::cout << std::dec << std::endl;
+				auto st=c.to_bytes(s);
+				//for(auto i=st.begin();i!=st.end();i++) std::cout << std::hex << (unsigned)(unsigned char)*i << " ";
+				//std::cout << std::dec << std::endl;
+				//st.erase(0,3);
 				stream << st;
 			}
 			return stream.str();
 		}
 
 	public:
-		UTF16_8(char *p,const long l) : ptr(p), length(l), raw16(length/2), strings16() {
+		UTF16_8(it_t b,it_t e) : begin(b), end(e), length(end-begin), raw16(length/2,0), strings16() {
+			//std::cout << "UTF16-8 converter with length " << length << std::endl;
 			ch8To16();
+			//std::cout << "8 to 16" << std::endl;
 			split();
+			//std::cout << "split" << std::endl;
 			string8=convert();
+			//std::cout << "converted" << std::endl;
 		}
 
 		operator std::string() { return string8; }
 
 	};
 
+	void StringField::parse() {
+		if(begin==end) return;
 
+		it=begin;
+		char type=*(it++);
+		if(languageField && isalpha(*it)) { // check to make sure that it is really there
+			language=std::string(it,it+3);
+			it+=3;
+			//std::cout << "Language tag is " << language << std::endl;
+		}
+			else {
+				//std::cout << "No language tag" << std::endl;
+			}
+			try {
+				switch(type) {
+				case 0 : { // ISO8859-1
+					std::cout << "ISO8859-1" << std::endl;
+					std::vector<char> out;
+					while(it!=end) {
+						auto c=(unsigned char)*(it++);
+						if(c<128) out.push_back(c);
+						else {
+							out.push_back(0x80 | (c&0x3f));
+							out.push_back(0xc0 | (c>>6));
+						}
+					}
+					str=std::string(out.data(),out.size());
+					break;
+				}
+				case 1 : { // UTF-16
+					std::cout << "UTF-16" << std::endl;
+					str=(std::string)UTF16_8<>(it,end);
+					break;
+				}
+				case 2 : { // UTF-16BE
+					std::cout << "UTF16-BE" << std::endl;
+					str=(std::string)UTF16_8<>(it,end);
+					break;
+				}
+				case 3 : //UTF-8
+					std::cout << "UTF-8" << std::endl;
+					str=std::string(it,end);
+					break;
+				default:
+					std::cout << "Unknown charset" << std::endl;
+					str=std::string(begin,end);
+					break;
+				}
+			}
+			catch(...) {
+				str=std::string(begin,end);
+			}
+		}
+
+
+
+/*
 
 	StringField::StringField(char *ptr,long length,bool languageField) {
 		if(length==0) {
@@ -140,7 +237,7 @@ SyncSafeInteger::operator bool() const {
 				str=std::string(ptr,length);
 			}
 		}
-	}
+	}*/
 
 }}
 

@@ -1,48 +1,47 @@
 /*
  * ID3Frame.hpp
  *
- *  Created on: 29 Sep 2019
+ *  Created on: 1 Oct 2019
  *      Author: julianporter
  */
 
-#ifndef PCM2MP3_CPP_SRC_ID3_ID3FRAME_HPP_
-#define PCM2MP3_CPP_SRC_ID3_ID3FRAME_HPP_
+#ifndef ID3FRAME_HPP_
+#define ID3FRAME_HPP_
 
-#include <cstdint>
-#include <string>
-#include <vector>
-#include <sstream>
-#include <map>
-#include <memory>
-#include <type_traits>
-#include "ID3FrameHeader.hpp"
+#include "ID3Types.hpp"
 
 namespace id3 { namespace v2 {
 
-
 class Frame {
-public:
-	using mdata_t = std::vector<char>;
-
 private:
-	static mdata_t readBinaryFile(std::istream &stream);
+	std::string key;
+	std::string content;
+	std::string language;
 
-	mdata_t data;
-	Header header;
+	unsigned length;
+	char16_t flags;
 
-	void findHeader();
+	it_t begin;
+	it_t end;
 
 public:
-
-	Frame(std::istream &stream) : data(Frame::readBinaryFile(stream)), header() {};
+	Frame(it_t b,it_t e) : key(), content(), language(), length(0), flags(0), begin(b), end(e) {};
 	virtual ~Frame() = default;
 
 	bool parse();
+	std::string frameTag() const { return key; }
+	std::string frameContent() const { return content; }
+	std::string frameLanguage() const { return language; }
+	bool hasLanguage() const { return language!=""; }
+	unsigned size() const { return length; }
+
+	operator std::string() const;
+
 };
 
-
-}} /* namespace id3 */
-
+}}
 
 
-#endif /* PCM2MP3_CPP_SRC_ID3_ID3FRAME_HPP_ */
+
+
+#endif /* ID3FRAME_HPP_ */

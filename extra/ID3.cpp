@@ -15,7 +15,8 @@
 #include <taglib/mpegfile.h>
 #include <sstream>
 #include <fstream>
-#include "ID3Frame.hpp"
+
+#include "../src/id3/ID3Tag.hpp"
 
 
 namespace  id3 {

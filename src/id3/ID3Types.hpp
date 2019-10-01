@@ -11,8 +11,14 @@
 #include <string>
 #include <locale>
 #include <codecvt>
+#include <vector>
+#include <cstdint>
 
 namespace id3 { namespace v2 {
+
+using it_t = std::vector<char>::iterator;
+
+char16_t from8(char a,char b,bool rev=false);
 
 class SyncSafeInteger {
 private:
@@ -22,6 +28,7 @@ private:
 public:
 	SyncSafeInteger(const uint32_t u);
 	SyncSafeInteger(char *b);
+	SyncSafeInteger(it_t it);
 	virtual ~SyncSafeInteger() = default;
 	template <typename T, class = typename std::enable_if<std::is_integral<T>::value>::type>
 	operator T() const { return (T)i32; }
@@ -35,12 +42,19 @@ public:
 	private:
 		std::string str;
 		std::string language;
+		bool languageField;
+		it_t it;
+		it_t begin;
+		it_t end;
 	public:
-		StringField() : str(), language() {};
-		StringField(char *ptr,const long length,bool languageField=false);
+		StringField() : str(), language(), languageField(false), it(), begin(), end() {};
+		//StringField(char *ptr,const long length,bool languageField=false);
+		StringField(it_t b,it_t e,bool l=false) : str(),language(), languageField(l), it(), begin(b), end(e) {}
 		StringField(const StringField &) = default;
 		StringField & operator=(const StringField &) = default;
 		virtual ~StringField() = default;
+
+		void parse();
 
 		operator std::string() const { return str; }
 		std::string lang() const { return language; }
