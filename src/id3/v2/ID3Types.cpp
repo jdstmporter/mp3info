@@ -7,9 +7,6 @@
 
 
 #include "ID3Types.hpp"
-#include <iostream>
-#include <vector>
-#include <sstream>
 #include <cctype>
 
 namespace id3 { namespace v2 {
@@ -50,11 +47,7 @@ SyncSafeInteger::operator bool() const {
 	template<std::codecvt_mode M = (std::codecvt_mode)0>
 	using converter = std::wstring_convert<convert<M>,char16_t>;
 
-	char16_t from8(char a,char b,bool rev) {
-		unsigned char x = rev ? b : a;
-		unsigned char y = rev ? a : b;
-		return ((char16_t)(x<< 8)) + ((char16_t)y);
-	}
+
 
 
 	template<std::codecvt_mode M = (std::codecvt_mode)0>

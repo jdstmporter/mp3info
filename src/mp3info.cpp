@@ -35,20 +35,18 @@ int main(int argc,char *argv[]) {
 		if(verbose) std::cout << " with verbose output";
 		std::cout << std::endl;
 
-		mp3::MP3Test test(infile);
+		BinaryFile file(infile);
+
+		mp3::MP3Test test(file);
 		test.parse(verbose);
 		auto result=test();
 		std::cout << *result << std::endl;
 
 		if(tags || rawTags) {
-			std::ifstream mp(infile,std::ifstream::binary);
-			if(mp.fail()) throw std::runtime_error("Cannot open file");
-			id3::v2::Tag id(mp);
+			id3::v2::Tag id(file);
 			id.parse();
 
-			std::ifstream mp2(infile,std::ifstream::binary);
-			if(mp2.fail()) throw std::runtime_error("Cannot open file");
-			id3::v1::Tag id1(mp2);
+			id3::v1::Tag id1(file);
 			if(id1.parse()) {
 				std::cout << "ID3v1 tag:" << std::endl << (std::string)id1 << std::endl;
 			}

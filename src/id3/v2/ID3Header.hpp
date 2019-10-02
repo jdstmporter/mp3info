@@ -8,11 +8,7 @@
 #ifndef ID3HEADER_HPP_
 #define ID3HEADER_HPP_
 
-#include <cstdint>
-#include <string>
-#include <vector>
-#include <map>
-#include <iostream>
+#include "../../base.hpp"
 
 namespace id3 { namespace v2 {
 
@@ -76,7 +72,7 @@ public:
 	long offset;
 
 	Header() : header(10,0), tag(), version(), flags(), length(0), offset(0) {};
-	Header(const mdata_t &data,const long o);
+	Header(const BinaryFile &data,const long o);
 	Header(const Header &) = default;
 	virtual ~Header() = default;
 

@@ -8,6 +8,7 @@
 #ifndef LIB_MP3FILE_HPP_
 #define LIB_MP3FILE_HPP_
 
+#include "../base.hpp"
 #include "MP3.hpp"
 #include "MP3Frame.hpp"
 
@@ -24,9 +25,8 @@ public:
 	using iterator = std::vector<MP3Frame>::const_iterator;
 
 
-	static mdata_t readBinaryFile(std::istream &stream);
 private:
-	mdata_t mp3;
+	BinaryFile mp3;
 	frameset_t frames;
 	MP3Frame initial;
 	offset_t offset;
@@ -35,7 +35,7 @@ private:
 
 public:
 	MP3File() : mp3(), frames(), initial(), offset(0) {};
-	MP3File(std::istream &stream) ;
+	MP3File(const BinaryFile &file) ;
 	virtual ~MP3File() = default;
 
 	void parse();

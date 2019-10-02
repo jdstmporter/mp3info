@@ -18,22 +18,9 @@ namespace mp3 {
 
 
 
-std::vector<char> MP3File::readBinaryFile(std::istream &stream) {
-	stream.seekg (0, stream.end);
-	auto length = stream.tellg();
-	stream.seekg (0, stream.beg);
 
-	std::vector<char> file(length,0);
-	auto c=file.data();
-	int pos=0;
-	while(pos<length) {
-	   stream.read(c+pos,1024);
-	   pos+=stream.gcount();
-	}
-	return file;
-}
 
-MP3File::MP3File(std::istream &stream) : mp3(readBinaryFile(stream)), frames(), initial(mp3,0) {
+MP3File::MP3File(const BinaryFile &file) : mp3(file), frames(), initial(mp3,0) {
 	offset=initial.match();
 	frames.push_back(initial);
 	spec=initial.Specification();

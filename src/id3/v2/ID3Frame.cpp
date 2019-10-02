@@ -6,8 +6,6 @@
  */
 
 #include "ID3Frame.hpp"
-
-#include <sstream>
 #include <cctype>
 
 namespace id3 { namespace v2 {

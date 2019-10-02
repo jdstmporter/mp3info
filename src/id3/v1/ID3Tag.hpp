@@ -1,32 +1,19 @@
 /*
- * ID3Frame.hpp
+ * ID3Tag.hpp
  *
- *  Created on: 29 Sep 2019
+ *  Created on: 2 Oct 2019
  *      Author: julianporter
  */
 
-#ifndef PCM2MP3_CPP_SRC_ID3_ID3FRAME_HPP_
-#define PCM2MP3_CPP_SRC_ID3_ID3FRAME_HPP_
+#ifndef ID3V1_ID3TAG_HPP_
+#define ID3V1_ID3TAG_HPP_
 
-
-#include <sstream>
-#include <map>
-#include <memory>
-#include <type_traits>
-
-#include "ID3Header.hpp"
-#include "ID3Types.hpp"
-
-namespace id3 {
-
-using mdata_t = std::vector<char>;
-mdata_t readBinaryFile(std::istream &stream);
-
-namespace v1 {
+#include "../../base.hpp"
+namespace id3 { namespace v1 {
 
 class Tag {
 private:
-	mdata_t data;
+	BinaryFile data;
 	std::map<std::string,std::string> fields;
 	unsigned _genre;
 	unsigned _track;
@@ -45,7 +32,7 @@ private:
 	}
 
 public:
-	Tag(std::istream &stream) : data(id3::readBinaryFile(stream)), fields(), _genre(255), _track(0), exists(false) {};
+	Tag(const BinaryFile &file) : data(file), fields(), _genre(255), _track(0), exists(false) {};
 	virtual ~Tag() = default;
 	bool parse();
 
@@ -61,26 +48,8 @@ public:
 };
 
 
-
-}
-
-namespace v2 {
-
-class Tag {
-private:
-	mdata_t data;
-	Header header;
-	void findHeader();
-
-public:
-	Tag(std::istream &stream) : data(id3::readBinaryFile(stream)), header() {};
-	virtual ~Tag() = default;
-	bool parse();
-};
-
-
-}} /* namespace id3 */
+}}
 
 
 
-#endif /* PCM2MP3_CPP_SRC_ID3_ID3FRAME_HPP_ */
+#endif /* ID3TAG_HPP_ */

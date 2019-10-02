@@ -8,17 +8,13 @@
 #ifndef ID3TYPES_HPP_
 #define ID3TYPES_HPP_
 
-#include <string>
 #include <locale>
 #include <codecvt>
-#include <vector>
-#include <cstdint>
+#include "../../base.hpp"
+
+
 
 namespace id3 { namespace v2 {
-
-using it_t = std::vector<char>::iterator;
-
-char16_t from8(char a,char b,bool rev=false);
 
 class SyncSafeInteger {
 private:

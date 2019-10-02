@@ -5,7 +5,6 @@
  *      Author: julianporter
  */
 #import "ID3Types.hpp"
-#include <sstream>
 #include "ID3Header.hpp"
 
 namespace id3 { namespace v2 {
@@ -46,8 +45,8 @@ std::string Version::toString() const {
 
 const std::string Header::tagString="ID3";
 
-Header::Header(const mdata_t &data,const long o) : header(10,0), offset(o) {
-	auto ptr=data.begin()+offset;
+Header::Header(const BinaryFile &data,const long o) : header(10,0), offset(o) {
+	auto ptr=data.cbegin()+offset;
 	std::copy_n(ptr,10,header.begin());
 
 	tag=std::string(header.begin(),header.begin()+3);
