@@ -45,7 +45,7 @@ std::string Version::toString() const {
 
 const std::string Header::tagString="ID3";
 
-Header::Header(const BinaryFile &data,const long o) : header(10,0), offset(o) {
+Header::Header(const base::BinaryFile &data,const long o) : header(10,0), offset(o) {
 	auto ptr=data.cbegin()+offset;
 	std::copy_n(ptr,10,header.begin());
 

@@ -12,7 +12,7 @@
 #include <mp3/MP3File.hpp>
 #include <mp3/MP3Frame.hpp>
 #include <mp3/Test.hpp>
-#include "id3/ID3.hpp"
+#include <id3/ID3.hpp>
 
 
 

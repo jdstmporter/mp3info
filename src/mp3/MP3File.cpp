@@ -20,7 +20,7 @@ namespace mp3 {
 
 
 
-MP3File::MP3File(const BinaryFile &file) : mp3(file), frames(), initial(mp3,0) {
+MP3File::MP3File(const base::BinaryFile &file) : mp3(file), frames(), initial(mp3,0) {
 	offset=initial.match();
 	frames.push_back(initial);
 	spec=initial.Specification();

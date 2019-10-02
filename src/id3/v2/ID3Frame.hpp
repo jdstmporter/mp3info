@@ -21,11 +21,11 @@ private:
 	unsigned length;
 	char16_t flags;
 
-	it_t begin;
-	it_t end;
+	base::it_t begin;
+	base::it_t end;
 
 public:
-	Frame(it_t b,it_t e) : key(), content(), language(), length(0), flags(0), begin(b), end(e) {};
+	Frame(base::it_t b,base::it_t e) : key(), content(), language(), length(0), flags(0), begin(b), end(e) {};
 	virtual ~Frame() = default;
 
 	bool parse();

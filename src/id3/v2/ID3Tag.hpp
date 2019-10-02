@@ -18,12 +18,12 @@ namespace id3 { namespace v2 {
 
 class Tag {
 private:
-	BinaryFile data;
+	base::BinaryFile data;
 	Header header;
 	void findHeader();
 
 public:
-	Tag(const BinaryFile &file) : data(file), header() {};
+	Tag(const base::BinaryFile &file) : data(file), header() {};
 	virtual ~Tag() = default;
 	bool parse();
 };

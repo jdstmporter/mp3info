@@ -5,7 +5,7 @@
  *      Author: julianporter
  */
 
-#include "./ID3Tag.hpp"
+#include "ID3Tag.hpp"
 #include "ID3Frame.hpp"
 
 #include <iostream>
@@ -43,7 +43,7 @@ bool Tag::parse() {
 		std::vector<char> tag(header.length,0);
 		std::copy_n(data.begin() + header.offset+10,(unsigned)header.length,tag.begin());
 		std::cout << "Constructed tag vector of length " << tag.size() << std::endl;
-		it_t it = tag.begin();
+		base::it_t it = tag.begin();
 		if(header.flags.hasExtendedHeader()) {
 			unsigned l=SyncSafeInteger(it);
 			it+=l;

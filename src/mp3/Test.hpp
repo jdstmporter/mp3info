@@ -42,7 +42,7 @@ public:
 
 class MP3Test {
 private:
-	std::string fname;
+	base::BinaryFile file;
 	std::shared_ptr<MP3TestResult> result;
 	std::string error;
 
@@ -50,7 +50,7 @@ private:
 
 
 public:
-	MP3Test(const std::string &name) : fname(name), result(), error() {};
+	MP3Test(const base::BinaryFile &f) : file(f), result(), error() {};
 	virtual ~MP3Test() = default;
 
 	void parse(const bool verbose=false);

@@ -35,7 +35,7 @@ int main(int argc,char *argv[]) {
 		if(verbose) std::cout << " with verbose output";
 		std::cout << std::endl;
 
-		BinaryFile file(infile);
+		base::BinaryFile file(infile);
 
 		mp3::MP3Test test(file);
 		test.parse(verbose);

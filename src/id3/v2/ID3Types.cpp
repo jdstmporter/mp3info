@@ -27,7 +27,7 @@ SyncSafeInteger::SyncSafeInteger(char *b) {
 		i32=v;
 	}
 
-	SyncSafeInteger::SyncSafeInteger(it_t it) {
+	SyncSafeInteger::SyncSafeInteger(base::it_t it) {
 		uint32_t v=0;
 		for(auto i=0;i<4;i++) {
 			auto c=(*it++);
@@ -53,8 +53,8 @@ SyncSafeInteger::operator bool() const {
 	template<std::codecvt_mode M = (std::codecvt_mode)0>
 	class UTF16_8 {
 	private:
-		it_t begin;
-		it_t end;
+		base::it_t begin;
+		base::it_t end;
 		long length;
 		converter<M> c;
 
@@ -68,12 +68,12 @@ SyncSafeInteger::operator bool() const {
 			auto it=begin;
 			auto offset=0;
 
-			char16_t bom=from8(it[0],it[1]);
+			char16_t bom=base::from8(it[0],it[1]);
 			auto rev=bom==0xfffe;
 			if(bom==0xfffe||bom==0xfeff) it+=2;
 
 			while(it!=end) {
-				raw16[offset++] = from8(it[0],it[1],rev);
+				raw16[offset++] = base::from8(it[0],it[1],rev);
 				it+=2;
 			}
 			//for(auto it=raw16.begin();it!=raw16.end();it++) std::cout << std::hex << *it << " ";
@@ -112,7 +112,7 @@ SyncSafeInteger::operator bool() const {
 		}
 
 	public:
-		UTF16_8(it_t b,it_t e) : begin(b), end(e), length(end-begin), raw16(length/2,0), strings16() {
+		UTF16_8(base::it_t b,base::it_t e) : begin(b), end(e), length(end-begin), raw16(length/2,0), strings16() {
 			//std::cout << "UTF16-8 converter with length " << length << std::endl;
 			ch8To16();
 			//std::cout << "8 to 16" << std::endl;
@@ -143,16 +143,7 @@ SyncSafeInteger::operator bool() const {
 				switch(type) {
 				case 0 : { // ISO8859-1
 					std::cout << "ISO8859-1" << std::endl;
-					std::vector<char> out;
-					while(it!=end) {
-						auto c=(unsigned char)*(it++);
-						if(c<128) out.push_back(c);
-						else {
-							out.push_back(0x80 | (c&0x3f));
-							out.push_back(0xc0 | (c>>6));
-						}
-					}
-					str=std::string(out.data(),out.size());
+					str=base::ISO8859(it,end);
 					break;
 				}
 				case 1 : { // UTF-16

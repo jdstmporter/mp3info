@@ -46,13 +46,10 @@ bool MP3TestResult::isGood() const {
 
 void MP3Test::parse(const bool verbose) {
 	try {
-		std::ifstream mp(fname,std::ifstream::binary);
-		if(mp.fail()) throw std::runtime_error("Cannot open file");
-
 		MP3::verbose=verbose;
-		MP3File file(mp);
-		file.parse();
-		result=std::make_shared<MP3TestResult>(file,verbose);
+		MP3File mp(file);
+		mp.parse();
+		result=std::make_shared<MP3TestResult>(mp,verbose);
 	}
 	catch(std::exception &e) {
 		result=std::make_shared<MP3TestResult>(e.what());

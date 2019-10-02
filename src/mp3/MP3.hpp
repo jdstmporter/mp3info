@@ -8,16 +8,9 @@
 #ifndef LIB_MP3_HPP_
 #define LIB_MP3_HPP_
 
-#include <cstdint>
-#include <string>
-#include <exception>
-#include <stdexcept>
-#include <iostream>
-#include <vector>
-#include <map>
+
+#include <base.hpp>
 #include <memory>
-#include <algorithm>
-#include <sstream>
 #include <array>
 
 namespace mp3 {
@@ -53,8 +46,6 @@ enum class MPEGEmphasis : unsigned {
 };
 
 
-
-using mdata_t = std::vector<char>;
 using size_t = unsigned long;
 using offset_t = unsigned long;
 

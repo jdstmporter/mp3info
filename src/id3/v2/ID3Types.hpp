@@ -10,7 +10,7 @@
 
 #include <locale>
 #include <codecvt>
-#include "../../base.hpp"
+#include <base.hpp>
 
 
 
@@ -24,7 +24,7 @@ private:
 public:
 	SyncSafeInteger(const uint32_t u);
 	SyncSafeInteger(char *b);
-	SyncSafeInteger(it_t it);
+	SyncSafeInteger(base::it_t it);
 	virtual ~SyncSafeInteger() = default;
 	template <typename T, class = typename std::enable_if<std::is_integral<T>::value>::type>
 	operator T() const { return (T)i32; }
@@ -39,13 +39,13 @@ public:
 		std::string str;
 		std::string language;
 		bool languageField;
-		it_t it;
-		it_t begin;
-		it_t end;
+		base::it_t it;
+		base::it_t begin;
+		base::it_t end;
 	public:
 		StringField() : str(), language(), languageField(false), it(), begin(), end() {};
 		//StringField(char *ptr,const long length,bool languageField=false);
-		StringField(it_t b,it_t e,bool l=false) : str(),language(), languageField(l), it(), begin(b), end(e) {}
+		StringField(base::it_t b,base::it_t e,bool l=false) : str(),language(), languageField(l), it(), begin(b), end(e) {}
 		StringField(const StringField &) = default;
 		StringField & operator=(const StringField &) = default;
 		virtual ~StringField() = default;

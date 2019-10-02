@@ -8,7 +8,7 @@
 #ifndef LIB_MP3FILE_HPP_
 #define LIB_MP3FILE_HPP_
 
-#include "../base.hpp"
+#include <base.hpp>
 #include "MP3.hpp"
 #include "MP3Frame.hpp"
 
@@ -26,7 +26,7 @@ public:
 
 
 private:
-	BinaryFile mp3;
+	base::BinaryFile mp3;
 	frameset_t frames;
 	MP3Frame initial;
 	offset_t offset;
@@ -35,7 +35,7 @@ private:
 
 public:
 	MP3File() : mp3(), frames(), initial(), offset(0) {};
-	MP3File(const BinaryFile &file) ;
+	MP3File(const base::BinaryFile &file) ;
 	virtual ~MP3File() = default;
 
 	void parse();

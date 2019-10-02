@@ -17,7 +17,7 @@ bool Frame::parse() {
 	SyncSafeInteger l(begin+4);
 	if(!l) return false;
 	length=(unsigned)l;
-	flags=from8(begin[8],begin[9]);
+	flags=base::from8(begin[8],begin[9]);
 	auto lang=key=="COMM";
 	StringField c(begin+10,begin+10+l,lang);
 	c.parse();

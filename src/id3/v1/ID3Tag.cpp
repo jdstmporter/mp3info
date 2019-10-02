@@ -10,43 +10,41 @@
 
 namespace id3 { namespace v1 {
 
-const std::vector<std::pair<std::string,unsigned>> Tag::names = {
-		std::make_pair("Title",30),
-		std::make_pair("Artist",30),
-		std::make_pair("Album",30),
-		std::make_pair("Year",4),
-		std::make_pair("Comment",28)
+const std::vector<Tag::Spec> Tag::names = {
+		Spec(Frames::Title,"Title",30),
+		Spec(Frames::Artist,"Artist",30),
+		Spec(Frames::Album,"Album",30),
+		Spec(Frames::Year,"Year",4),
+		Spec(Frames::Comment,"Comment",28)
 };
 
 
 bool Tag::parse() {
-	if(data.size()<128) {
+	try {
+		if(data.size()<128) throw std::runtime_error("Too short");
+		auto it=data.begin()+data.size()-128;
+		if(std::string(it,it+3)!="TAG") throw std::runtime_error("No header");
+		it+=3;
+		for(auto field = Tag::names.begin();field!=Tag::names.end();field++) {
+			fields[field->frame]=std::string(it,it+field->length);
+			it+=field->length;
+		}
+		_track=(unsigned)(unsigned char)*(++it);
+		_genre=(unsigned)(unsigned char)*(++it);
+		exists=true;
+	}
+	catch(...) {
 		exists=false;
-		return false;
 	}
-	auto it=data.begin()+data.size()-128;
-	if(std::string(it,it+3)!="TAG") {
-		exists=false;
-		return false;
-	}
-	it+=3;
-	for(auto field = Tag::names.begin();field!=Tag::names.end();field++) {
-		auto name=field->first;
-		auto length=field->second;
-		fields[name]=std::string(it,it+length);
-		it+=length;
-	}
-	_track=(unsigned)(unsigned char)*(++it);
-	_genre=(unsigned)(unsigned char)*(++it);
-	return true;
+	return exists;
 }
 
 Tag::operator std::string() const {
 	std::stringstream s;
 
 	for(auto field = Tag::names.begin();field!=Tag::names.end();field++) {
-		auto name=field->first;
-		s << name << " : " << get(name) << std::endl;
+		auto name=field->name;
+		s << field->name << " : " << get(field->frame) << std::endl;
 	}
 	s << "Track : " << track() << std::endl;
 	s << "Genre : " << genre() << std::endl;
