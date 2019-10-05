@@ -9,11 +9,9 @@
 #define ID3V1_ID3TAG_HPP_
 
 #include <base.hpp>
+#include "Genre.hpp"
+
 namespace id3 { namespace v1 {
-
-
-
-
 
 class Tag {
 private:
@@ -38,7 +36,7 @@ private:
 
 	base::BinaryFile data;
 	std::map<Frames,std::string> fields;
-	unsigned _genre;
+	Genre _genre;
 	unsigned _track;
 
 	const static std::vector<Spec> names;
@@ -55,7 +53,7 @@ private:
 	}
 
 public:
-	Tag(const base::BinaryFile &file) : data(file), fields(), _genre(255), _track(0), exists(false) {};
+	Tag(const base::BinaryFile &file) : data(file), fields(), _genre(), _track(0), exists(false) {};
 	virtual ~Tag() {
 		std::cerr << "In TAG dealloc";
 	}
@@ -68,7 +66,7 @@ public:
 	std::string year() const { return get(Frames::Year) ; }
 	std::string comment() const { return get(Frames::Comment) ; }
 	unsigned track() const { return _track; }
-	unsigned genre() const { return _genre; }
+	Genre genre() const { return _genre; }
 	bool hasTag() const { return exists; }
 	operator std::string() const;
 };

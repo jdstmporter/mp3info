@@ -30,7 +30,7 @@ bool Tag::parse() {
 			it+=field->length;
 		}
 		_track=(unsigned)(unsigned char)*(++it);
-		_genre=(unsigned)(unsigned char)*(++it);
+		_genre=Genre(*(++it));
 		exists=true;
 	}
 	catch(...) {
@@ -47,7 +47,7 @@ Tag::operator std::string() const {
 		s << field->name << " : " << get(field->frame) << std::endl;
 	}
 	s << "Track : " << track() << std::endl;
-	s << "Genre : " << genre() << std::endl;
+	s << "Genre : " << (std::string)genre() << std::endl;
 	return s.str();
 }
 
